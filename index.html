@@ -16,8 +16,6 @@
             height: 100%;
             overflow-y: auto;
             overflow-x: hidden;
-            /* Allow zoom on mobile */
-            touch-action: pan-x pan-y pinch-zoom;
         }
         body {
             background-color: #000;
@@ -30,7 +28,6 @@
             margin: 0;
             -webkit-text-size-adjust: 100%;
             -ms-text-size-adjust: 100%;
-            touch-action: pan-x pan-y pinch-zoom;
         }
         .menu-container {
             width: 100%;
@@ -41,11 +38,6 @@
             padding: 0;
             margin: 0;
         }
-        .menu-image-wrapper {
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-        }
         .menu-image {
             width: 100%;
             height: auto;
@@ -54,9 +46,7 @@
             image-rendering: -webkit-optimize-contrast;
             image-rendering: crisp-edges;
             object-fit: contain;
-            /* Do NOT restrict touch — allow pinch-zoom and pan */
-            touch-action: auto;
-            -webkit-user-drag: none;
+            touch-action: pan-y;
         }
         @media screen and (max-width: 768px) {
             body {
@@ -73,220 +63,17 @@
                 -webkit-text-size-adjust: 100%;
             }
         }
-
-        /* Zoom overlay for pinch-zoom on individual images */
-        .zoom-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 9999;
-            background: #000;
-            overflow: auto;
-            touch-action: pan-x pan-y pinch-zoom;
-            -webkit-overflow-scrolling: touch;
-        }
-        .zoom-overlay.active {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-        .zoom-overlay img {
-            max-width: none;
-            width: auto;
-            height: auto;
-            display: block;
-            touch-action: pan-x pan-y pinch-zoom;
-        }
-        .zoom-close {
-            position: fixed;
-            top: 12px;
-            right: 12px;
-            z-index: 10001;
-            background: rgba(0,0,0,0.6);
-            color: #fff;
-            border: 2px solid #fff;
-            border-radius: 50%;
-            width: 44px;
-            height: 44px;
-            font-size: 24px;
-            line-height: 40px;
-            text-align: center;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .zoom-hint {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10001;
-            background: rgba(0,0,0,0.7);
-            color: #ccc;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-family: sans-serif;
-            font-size: 13px;
-            pointer-events: none;
-            opacity: 1;
-            transition: opacity 0.5s;
-        }
-        .zoom-hint.hidden {
-            opacity: 0;
-        }
-
-        /* Image loading placeholder */
-        .menu-image-wrapper::before {
-            content: '';
-            display: block;
-            padding-top: 141%; /* Approximate aspect ratio for menu images (A4-ish) */
-            background: #111;
-        }
-        .menu-image-wrapper.img-loaded::before {
-            display: none;
-        }
-        .menu-image {
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .menu-image.loaded {
-            position: static;
-            opacity: 1;
-        }
     </style>
-
-    <!-- Preload the first image for instant display -->
-    <link rel="preload" as="image" href="meni/image_1.jpg" fetchpriority="high">
 </head>
 <body>
     <div class="menu-container">
-        <!-- Image 1: eager load (visible immediately) -->
-        <div class="menu-image-wrapper">
-            <img src="meni/image_1.jpg" alt="Pablo Food Menu Page 1" class="menu-image" loading="eager" fetchpriority="high" decoding="async" onload="this.classList.add('loaded'); this.parentElement.classList.add('img-loaded');">
-        </div>
-        <!-- Image 2: lazy load -->
-        <div class="menu-image-wrapper">
-            <img src="meni/image_2.jpg" alt="Pablo Food Menu Page 2" class="menu-image" loading="lazy" decoding="async" onload="this.classList.add('loaded'); this.parentElement.classList.add('img-loaded');">
-        </div>
-        <!-- Image 3: lazy load -->
-        <div class="menu-image-wrapper">
-            <img src="meni/image_3.jpg" alt="Pablo Food Menu Page 3" class="menu-image" loading="lazy" decoding="async" onload="this.classList.add('loaded'); this.parentElement.classList.add('img-loaded');">
-        </div>
-        <!-- Image 4: lazy load -->
-        <div class="menu-image-wrapper">
-            <img src="meni/image_4.jpg" alt="Pablo Food Menu Page 4" class="menu-image" loading="lazy" decoding="async" onload="this.classList.add('loaded'); this.parentElement.classList.add('img-loaded');">
-        </div>
-        <!-- Image 5: lazy load -->
-        <div class="menu-image-wrapper">
-            <img src="meni/image_5.jpg" alt="Pablo Food Menu Page 5" class="menu-image" loading="lazy" decoding="async" onload="this.classList.add('loaded'); this.parentElement.classList.add('img-loaded');">
-        </div>
+        <img src="meni/image_1.jpg" alt="Pablo Food Menu Page 1" class="menu-image" loading="eager">
+        <img src="meni/image_2.jpg" alt="Pablo Food Menu Page 2" class="menu-image" loading="eager">
+        <img src="meni/image_3.jpg" alt="Pablo Food Menu Page 3" class="menu-image" loading="eager">
+        <img src="meni/image_4.jpg" alt="Pablo Food Menu Page 4" class="menu-image" loading="eager">
+        <img src="meni/image_5.jpg" alt="Pablo Food Menu Page 5" class="menu-image" loading="eager">
     </div>
 
-    <!-- Zoom overlay for tap-to-zoom on individual images -->
-    <div class="zoom-overlay" id="zoomOverlay">
-        <button class="zoom-close" id="zoomClose" aria-label="Close zoom">&times;</button>
-        <img id="zoomImage" src="" alt="Zoomed menu page">
-        <div class="zoom-hint" id="zoomHint">Pinch to zoom &bull; Scroll to pan &bull; Tap &times; to close</div>
-    </div>
 
-    <script>
-        // ========== ZOOM FUNCTIONALITY ==========
-        // Double-tap an image to open it in a full-screen zoomable overlay
-        const zoomOverlay = document.getElementById('zoomOverlay');
-        const zoomImage = document.getElementById('zoomImage');
-        const zoomClose = document.getElementById('zoomClose');
-        const zoomHint = document.getElementById('zoomHint');
-        let lastTap = 0;
-
-        document.querySelectorAll('.menu-image').forEach(img => {
-            img.addEventListener('click', function(e) {
-                const now = Date.now();
-                if (now - lastTap < 350) {
-                    // Double tap detected — open zoom
-                    e.preventDefault();
-                    openZoom(this.src, this.alt);
-                }
-                lastTap = now;
-            });
-
-            // Also handle touch double-tap more reliably on mobile
-            let touchStartTime = 0;
-            let touchStartTarget = null;
-            img.addEventListener('touchend', function(e) {
-                const now = Date.now();
-                if (now - touchStartTime < 350 && touchStartTarget === this) {
-                    e.preventDefault();
-                    openZoom(this.src, this.alt);
-                }
-                touchStartTime = now;
-                touchStartTarget = this;
-            });
-        });
-
-        function openZoom(src, alt) {
-            zoomImage.src = src;
-            zoomImage.alt = alt || 'Zoomed image';
-            zoomOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-
-            // Show hint briefly
-            zoomHint.classList.remove('hidden');
-            setTimeout(() => zoomHint.classList.add('hidden'), 3000);
-        }
-
-        function closeZoom() {
-            zoomOverlay.classList.remove('active');
-            document.body.style.overflow = '';
-            zoomImage.src = '';
-        }
-
-        zoomClose.addEventListener('click', closeZoom);
-
-        // Close on back gesture / escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeZoom();
-        });
-
-        // Close when swiping down on the overlay
-        let overlayTouchStartY = 0;
-        zoomOverlay.addEventListener('touchstart', function(e) {
-            overlayTouchStartY = e.touches[0].clientY;
-        });
-        zoomOverlay.addEventListener('touchend', function(e) {
-            const diff = e.changedTouches[0].clientY - overlayTouchStartY;
-            if (diff > 120) closeZoom(); // Swipe down to close
-        });
-
-        // ========== SEQUENTIAL IMAGE LOADING ==========
-        // Load images one after another so the first appears instantly
-        // and subsequent images don't compete for bandwidth
-        (function() {
-            const images = document.querySelectorAll('.menu-image[loading="lazy"]');
-            let loadIndex = 0;
-
-            // Use Intersection Observer to only start loading when near viewport
-            if ('IntersectionObserver' in window) {
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const img = entry.target;
-                            // Switch from lazy to eager once it's about to be seen
-                            img.setAttribute('loading', 'eager');
-                            observer.unobserve(img);
-                        }
-                    });
-                }, {
-                    rootMargin: '200px 0px' // Start loading 200px before entering viewport
-                });
-
-                images.forEach(img => observer.observe(img));
-            }
-        })();
-    </script>
 </body>
 </html>
